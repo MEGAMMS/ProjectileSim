@@ -2,7 +2,7 @@ import * as THREE from "three";
 import * as MathUtils from "three/src/math/MathUtils";
 
 import {renderer,textureLoader,modelLoader,scene,camera} from "./lib/renderer/Initialize";
-import "./lib/renderer/Skybox.js";
+//import "./lib/renderer/Skybox.js";
 
 import physicsEngine from "./lib/physics/PhysicsEngine.js";
 import RigidBody from "./lib/physics/RigidBody.js";
