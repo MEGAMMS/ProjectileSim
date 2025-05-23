@@ -69,7 +69,7 @@ async function main () {
 
     
     /* Physics */
-    const terrain = new RigidBody(terrain3D,0.0,1.0,0.1,"box");
+    const terrain = new RigidBody(terrain3D,0.0,0.5,0.8,"box");
     physicsEngine.addBody(terrain);
 
     
@@ -78,12 +78,12 @@ async function main () {
     window.addEventListener('keydown', (event) => {
         switch (event.key) {
             case 's':
-                const sphere = new RigidBody(sphere3D,1,1.0,0.1,"sphere");
+                const sphere = new RigidBody(sphere3D,1,0.5,0.8,"sphere");
                 sphere.representation.position.set(0,6,0);
                 physicsEngine.addBody(sphere);
                 break;
             case 'b':
-                const box = new RigidBody(box3D,1,1.0,0.1,"box");
+                const box = new RigidBody(box3D,1,0.5,0.8,"box");
                 box.representation.position.set(0,6,0);
                 physicsEngine.addBody(box);
                 break;
