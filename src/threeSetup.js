@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 // Create the main scene
 const mainScene = new THREE.Scene();
@@ -17,4 +19,22 @@ const mainRenderer = new THREE.WebGLRenderer({ antialias: true });
 mainRenderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(mainRenderer.domElement);
 
-export { mainScene, mainCamera, mainRenderer }; 
+const controls = new OrbitControls(mainCamera, mainRenderer.domElement);
+controls.update();
+
+mainRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+mainRenderer.outputEncoding = THREE.sRGBEncoding;
+// mainRenderer.physicallyCorrectLights = true;
+// mainRenderer.shadowMap.enabled = true;
+
+window.addEventListener('resize', onWindowResize, false);
+function onWindowResize() {
+    mainCamera.aspect = window.innerWidth / window.innerHeight;
+    mainCamera.updateProjectionMatrix();
+    mainRenderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+const textureLoader = new THREE.TextureLoader();
+const modelLoader = new GLTFLoader();
+
+export { mainScene, mainCamera, mainRenderer, controls, textureLoader, modelLoader };
