@@ -1,8 +1,6 @@
 import * as THREE from 'three';
 import { ImprovedNoise } from 'three/examples/jsm/math/ImprovedNoise.js';
 import { mainScene } from '../threeSetup.js';
-import physicsEngine from '../physics/PhysicsEngine.js';
-import RigidBody from '../physics/RigidBody.js';
 
 // Simple Terrain Configuration
 const TERRAIN_WIDTH = 200;
@@ -41,16 +39,28 @@ const terrainMaterial = new THREE.MeshLambertMaterial({
 const terrainMesh = new THREE.Mesh(terrainGeometry, terrainMaterial);
 mainScene.add(terrainMesh);
 
-// Create a simple ground plane for physics
-const groundGeometry = new THREE.PlaneGeometry(TERRAIN_WIDTH, TERRAIN_DEPTH);
-groundGeometry.rotateX(-Math.PI / 2);
-const groundMaterial = new THREE.MeshBasicMaterial({ 
-  transparent: true, 
-  opacity: 0.0 
-});
-const groundMesh = new THREE.Mesh(groundGeometry, groundMaterial);
-const groundBody = new RigidBody(groundMesh, 0, 0.8, 0.8);
-mainScene.add(groundMesh);
-physicsEngine.addBody(groundBody);
+// Pass terrain geometry to physics engine for collision detection
+// Wait for physics engine to be available
+const setupTerrainCollision = () => {
+  if (window.physicsEngine) {
+    window.physicsEngine.setTerrainGeometry(terrainGeometry);
+    console.log('Terrain collision setup complete');
+  } else {
+    // Retry after a short delay
+    setTimeout(setupTerrainCollision, 100);
+  }
+};
 
-export { physicsEngine }; 
+setupTerrainCollision();
+
+// Remove the old flat ground plane since we now have proper terrain collision
+// const groundGeometry = new THREE.PlaneGeometry(TERRAIN_WIDTH, TERRAIN_DEPTH);
+// groundGeometry.rotateX(-Math.PI / 2);
+// const groundMaterial = new THREE.MeshBasicMaterial({ 
+//   transparent: true, 
+//   opacity: 0.0 
+// });
+// const groundMesh = new THREE.Mesh(groundGeometry, groundMaterial);
+// const groundBody = new RigidBody(groundMesh, 0, 0.8, 0.8);
+// mainScene.add(groundMesh);
+// physicsEngine.addBody(groundBody); 
