@@ -9,14 +9,28 @@ import * as THREE from 'three';
 mainCamera.position.set(50, 30, 50);
 mainCamera.lookAt(0, 0, 0);
 
-// Add lighting for better terrain visibility
-const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+// Sun-like lighting setup
+const ambientLight = new THREE.AmbientLight(0x87ceeb, 0.3); // Sky blue ambient light
 mainScene.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-directionalLight.position.set(50, 50, 50);
-directionalLight.castShadow = true;
-mainScene.add(directionalLight);
+// Main sun light
+const sunLight = new THREE.DirectionalLight(0xffffff, 1.2);
+sunLight.position.set(100, 200, 100);
+sunLight.castShadow = true;
+sunLight.shadow.mapSize.width = 2048;
+sunLight.shadow.mapSize.height = 2048;
+sunLight.shadow.camera.near = 0.5;
+sunLight.shadow.camera.far = 500;
+sunLight.shadow.camera.left = -100;
+sunLight.shadow.camera.right = 100;
+sunLight.shadow.camera.top = 100;
+sunLight.shadow.camera.bottom = -100;
+mainScene.add(sunLight);
+
+// Add a softer fill light from the opposite direction
+const fillLight = new THREE.DirectionalLight(0xffffff, 0.2);
+fillLight.position.set(-50, 100, -50);
+mainScene.add(fillLight);
 
 // Create a test projectile (sphere)
 const projectileGeometry = new THREE.SphereGeometry(1, 16, 16);
