@@ -67,6 +67,7 @@ spherePrefab.receiveShadow = true;
 const boxPrefab = new THREE.Mesh(
   new THREE.BoxGeometry(0.5, 0.5, 0.5),
   new THREE.MeshStandardMaterial({ color: 0xFF0000, roughness: 1.0, metalness: 0.0 })
+  
 );
 boxPrefab.castShadow = true;
 boxPrefab.receiveShadow = true;
