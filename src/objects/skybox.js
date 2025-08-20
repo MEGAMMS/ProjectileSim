@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
-import { mainScene, mainRenderer } from '../threeSetup.js';
+import { mainRenderer } from '../threeSetup.js';
+import { mainScene } from './world.js';
 
 // Set up PMREM generator for environment map
 const pmremGenerator = new THREE.PMREMGenerator(mainRenderer);

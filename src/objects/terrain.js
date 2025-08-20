@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { ImprovedNoise } from 'three/examples/jsm/math/ImprovedNoise.js';
-import { mainScene } from '../threeSetup.js';
+import { mainScene } from './world.js';
 
 // Simple Terrain Configuration
 const TERRAIN_WIDTH = 200;
