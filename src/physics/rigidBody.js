@@ -7,14 +7,16 @@ import { ConvexGeometry } from 'three/addons/geometries/ConvexGeometry.js';
 
 class RigidBody {
   constructor(mesh, mass = 1, friction = 0.5, restitution = 0.8 , com = new THREE.Vector3()) {
+    mesh.updateMatrixWorld(true);
     this.mesh = mesh;
     mainScene.add(mesh);
 
-    this.convex = computeConvexPoints(mesh.geometry)
+    this.lconvex = computeConvexPoints(mesh.geometry);
+    this.convex = this.lconvex.map(v => v.clone().applyMatrix4(mesh.matrixWorld));
     this.sphere = new THREE.Sphere().setFromPoints(this.convex);
 
     // Visulize Collider
-    mesh.add(createConvexHelper(new ConvexGeometry(this.convex)));
+    //mesh.add(createConvexHelper(new ConvexGeometry(this.convex)));
 
     this.mass = mass;
     this.inverseMass = (mass !== 0.0) ? (1.0 / mass) : 0.0;
@@ -27,6 +29,7 @@ class RigidBody {
 
     this.friction = friction;
     this.restitution = restitution;
+    this.dragArea = 0;
 
     this.velocity = new THREE.Vector3();
     this.angularVelocity = new THREE.Vector3();

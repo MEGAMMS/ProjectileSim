@@ -23,8 +23,6 @@ function findFurthestPoint(shape, direction) {
 
 	for (let i = 0; i < shape.convex.length; i++) {
 		_vertex.copy(shape.convex[i]);
-		_vertex.applyMatrix4(shape.mesh.matrixWorld);
-
 		const distance = _vertex.dot(direction);
 		if (distance > maxDistance) {
 			maxDistance = distance;

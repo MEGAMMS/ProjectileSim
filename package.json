@@ -19,6 +19,7 @@
     "vite": "^6.3.5"
   },
   "dependencies": {
+    "monotone-convex-hull-2d": "^1.0.1",
     "three": "^0.176.0"
   }
 }

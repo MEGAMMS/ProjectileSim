@@ -1,5 +1,6 @@
 import { getContact } from "./collision/collisionDetection";
 import { applyPositionalCorrection, resolveCollision } from "./collision/collisionResponse";
+import { computeProjectedConvexArea } from "./convex";
 
 class PhysicsEngine {
     constructor() {
@@ -18,7 +19,13 @@ class PhysicsEngine {
             body.integrate(deltaTime);
         }
         
-        this.bodies.forEach(b => b.mesh.updateMatrixWorld(true));
+        this.bodies.forEach(b => {
+            if (b.mass == 0.0) return;
+            b.mesh.updateMatrixWorld(true);
+            b.convex = b.lconvex.map(v => v.clone().applyMatrix4(b.mesh.matrixWorld));
+            b.dragArea = computeProjectedConvexArea(b.convex,b.velocity.clone().negate());
+        });
+
         
         // Collision Detection & Response
         for (let i = 0; i < this.bodies.length; i++) {

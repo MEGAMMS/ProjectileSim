@@ -6,51 +6,46 @@ import { mainScene } from '../render/scene';
 import physicsEngine from '../physics/physicsEngine';
 
 // Terrain Config
-const width = 200;
-const depth = 200;
+const width = 400;
+const depth = 400;
 const segments = 100;
 const chunkSize = 20;
 const chunkResolution = 10;
 
-// Create base geometry (horizontal plane)
+// Create base plane geometry
 const geometry = new THREE.PlaneGeometry(width, depth, segments, segments);
 geometry.rotateX(-Math.PI / 2);
 
 const noise = new ImprovedNoise();
-const height = 15;
+const height = 15; // taller hills
 
 // Fractal noise function
-function fractalNoise(x, z, octaves = 3, persistence = 0.7, lacunarity = 1.5) {
-  let amplitude = 1;
-  let frequency = 1;
-  let noiseSum = 0;
-  let maxAmplitude = 0;
-
+function fractalNoise(x, z, octaves = 4, persistence = 0.6, lacunarity = 1.5) {
+  let amplitude = 1, frequency = 1, noiseSum = 0, maxAmplitude = 0;
   for (let o = 0; o < octaves; o++) {
     noiseSum += noise.noise(x * frequency, z * frequency, 0) * amplitude;
     maxAmplitude += amplitude;
     amplitude *= persistence;
     frequency *= lacunarity;
   }
-
   return noiseSum / maxAmplitude;
 }
 
-// Apply noise to terrain vertices
+// Apply smoother noise to vertices
 for (let i = 0; i < geometry.attributes.position.count; i++) {
   const x = geometry.attributes.position.getX(i);
   const z = geometry.attributes.position.getZ(i);
 
-  const base = fractalNoise(x * 0.05, z * 0.05, 3, 0.7, 1.5);
-  const detail = noise.noise(x * 0.3, z * 0.3, 0) * 0.2;
+  const base = fractalNoise(x * 0.04, z * 0.04, 4, 0.6, 1.5);
+  const detail = noise.noise(x * 0.2, z * 0.2, 0) * 0.1;
 
-  const elevation = base + detail;
-  geometry.attributes.position.setY(i, elevation * height);
+  geometry.attributes.position.setY(i, (base + detail) * height);
 }
 
+// Compute smooth normals
 geometry.computeVertexNormals();
 
-// Helper: Extract vertices for convex chunk
+// Extract vertices for convex chunk (optimized)
 function extractChunkVertices(baseGeometry, startX, startZ, step, countX, countZ) {
   const positions = baseGeometry.attributes.position;
   const vertices = [];
@@ -66,30 +61,30 @@ function extractChunkVertices(baseGeometry, startX, startZ, step, countX, countZ
       const vx = positions.getX(index);
       const vy = positions.getY(index);
       const vz = positions.getZ(index);
+
+      // Only top vertices for smoother convex hull
       vertices.push(new THREE.Vector3(vx, vy, vz));
+
+      // Optional: bottom vertices for sealed volume (physics)
       vertices.push(new THREE.Vector3(vx, 0, vz));
     }
   }
-
   return vertices;
 }
 
-// Helper: create black-and-white checker texture
+// Create procedural checker texture
 function createCheckerTexture(repeat = 8, color1 = '#000000', color2 = '#ffffff') {
   const size = 128;
   const canvas = document.createElement('canvas');
   canvas.width = size;
   canvas.height = size;
   const context = canvas.getContext('2d');
-
   const block = size / 2;
 
-  // Draw first color squares (black)
   context.fillStyle = color1;
   context.fillRect(0, 0, block, block);
   context.fillRect(block, block, block, block);
 
-  // Draw second color squares (white)
   context.fillStyle = color2;
   context.fillRect(block, 0, block, block);
   context.fillRect(0, block, block, block);
@@ -120,29 +115,28 @@ for (let i = 0; i < chunksZ; i++) {
       chunkResolution
     );
 
-    if (vertices.length < 4) continue;
+    if (vertices.length < 8) continue;
 
     const convexGeometry = new ConvexGeometry(vertices);
+    convexGeometry.computeVertexNormals(); // smooth edges
 
-    // Generate UVs for texture mapping
+    // UV mapping
     convexGeometry.computeBoundingBox();
     const max = convexGeometry.boundingBox.max;
     const min = convexGeometry.boundingBox.min;
     const uvAttr = [];
-
     for (let vi = 0; vi < convexGeometry.attributes.position.count; vi++) {
       const vx = convexGeometry.attributes.position.getX(vi);
       const vz = convexGeometry.attributes.position.getZ(vi);
-
       const u = (vx - min.x) / (max.x - min.x);
       const v = (vz - min.z) / (max.z - min.z);
       uvAttr.push(u, v);
     }
     convexGeometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvAttr, 2));
 
-    // MeshStandardMaterial for lighting
+    // Smooth MeshStandardMaterial
     const material = new THREE.MeshStandardMaterial({
-      map: createCheckerTexture(8, '#000000', '#ffffff'), // black & white
+      map: createCheckerTexture(8, '#000000', '#ffffff'),
       roughness: 0.8,
       metalness: 0.0,
       side: THREE.DoubleSide
@@ -152,7 +146,7 @@ for (let i = 0; i < chunksZ; i++) {
     chunkMesh.position.set(0, 0, 0);
     chunkMesh.updateMatrixWorld();
 
-    const chunk = new RigidBody(chunkMesh, 0, 0.8, 0.8);
+    const chunk = new RigidBody(chunkMesh, 0, 0.8, 0.8); // mass 0 for static terrain
     mainScene.add(chunkMesh);
     physicsEngine.addBody(chunk);
   }
