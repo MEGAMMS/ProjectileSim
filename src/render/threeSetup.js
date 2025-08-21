@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { mainCamera } from './objects/world';
+import { mainCamera } from './scene';
 
 // Set up the main renderer
 const mainRenderer = new THREE.WebGLRenderer({ antialias: true });

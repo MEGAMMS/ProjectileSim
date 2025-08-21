@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import physicsEngine from '../physics/PhysicsEngine.js';
-import RigidBody from '../physics/RigidBody.js';
+import physicsEngine from '../physics/physicsEngine.js';
+import RigidBody from '../physics/rigidBody.js';
 
 const projectiles = [];
 
@@ -25,14 +25,14 @@ window.addEventListener('keydown', (event) => {
   switch (event.key) {
     case 's': {
       const sphere = new RigidBody(spherePrefab.clone(), 1, 0.8, 0.8);
-      sphere.representation.position.set(1, 15, 0);
+      sphere.mesh.position.set(1, 15, 0);
       physicsEngine.addBody(sphere);
       projectiles.push(sphere);
       break;
     }
     case 'b': {
       const box = new RigidBody(boxPrefab.clone(), 1, 0.8, 0.8);
-      box.representation.position.set(0, 15, 0);
+      box.mesh.position.set(0, 15, 0);
       physicsEngine.addBody(box);
       projectiles.push(box);
       break;

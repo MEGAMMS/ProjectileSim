@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { mainScene} from './threeSetup.js'; 
+import { mainScene } from "../render/scene"; 
 
 export function visualizePoint (point) {
     const sphere = new THREE.Mesh(
