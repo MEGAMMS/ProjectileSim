@@ -6,8 +6,8 @@ export function resolveCollision(A, B, contact) {
     const contactPoint = contact.contactPoint.clone();
 
     // Relative positions from centers of mass
-    const rA = contactPoint.clone().sub(A.representation.position);
-    const rB = contactPoint.clone().sub(B.representation.position);
+    const rA = contactPoint.clone().sub(A.mesh.position);
+    const rB = contactPoint.clone().sub(B.mesh.position);
 
     // Velocities at contact point (linear + angular)
     const vA = A.velocity.clone().add(new THREE.Vector3().crossVectors(A.angularVelocity, rA));
@@ -81,6 +81,6 @@ export function applyPositionalCorrection(A, B, contact) {
     const correctionMagnitude = (depth / totalInvMass) * correctionPercent;
     const correction = contact.contactNormal.clone().multiplyScalar(correctionMagnitude);
 
-    if (A.mass !== 0.0) A.representation.position.addScaledVector(correction, -A.inverseMass);
-    if (B.mass !== 0.0) B.representation.position.addScaledVector(correction, B.inverseMass);
+    if (A.mass !== 0.0) A.mesh.position.addScaledVector(correction, -A.inverseMass);
+    if (B.mass !== 0.0) B.mesh.position.addScaledVector(correction, B.inverseMass);
 }

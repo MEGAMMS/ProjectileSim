@@ -14,7 +14,7 @@ class RigidBody {
     this.sphere = new THREE.Sphere().setFromPoints(this.convex);
 
     // Visulize Collider
-    //mesh.add(createConvexHelper(new ConvexGeometry(this.convex)));
+    mesh.add(createConvexHelper(new ConvexGeometry(this.convex)));
 
     this.mass = mass;
     this.inverseMass = (mass !== 0.0) ? (1.0 / mass) : 0.0;

@@ -19,14 +19,18 @@ export function getSupport(shape1, shape2, d) {
 
 function findFurthestPoint(shape, direction) {
 	let maxDistance = -Infinity;
+	let maxPoint = null;
 
-	for (let i = 0; i < shape.vertices.length; i++) {
-		_vertex.copy(shape.vertices[i]);
+	for (let i = 0; i < shape.convex.length; i++) {
+		_vertex.copy(shape.convex[i]);
+		_vertex.applyMatrix4(shape.mesh.matrixWorld);
+
 		const distance = _vertex.dot(direction);
 		if (distance > maxDistance) {
 			maxDistance = distance;
 			_maxPoint.copy(_vertex);
+			maxPoint = _maxPoint.clone(); // clone once, only when max updates
 		}
 	}
-	return _maxPoint.clone();
+	return maxPoint;
 }
