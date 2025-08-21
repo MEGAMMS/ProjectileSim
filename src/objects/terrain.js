@@ -5,7 +5,6 @@ import RigidBody from '../physics/rigidBody';
 import { mainScene } from '../render/scene';
 import physicsEngine from '../physics/physicsEngine';
 
-
 // Terrain Config
 const width = 200;
 const depth = 200;
@@ -18,9 +17,9 @@ const geometry = new THREE.PlaneGeometry(width, depth, segments, segments);
 geometry.rotateX(-Math.PI / 2);
 
 const noise = new ImprovedNoise();
-const height = 15; // Max terrain height
+const height = 15;
 
-// Fractal noise function (smooth but random)
+// Fractal noise function
 function fractalNoise(x, z, octaves = 3, persistence = 0.7, lacunarity = 1.5) {
   let amplitude = 1;
   let frequency = 1;
@@ -42,9 +41,7 @@ for (let i = 0; i < geometry.attributes.position.count; i++) {
   const x = geometry.attributes.position.getX(i);
   const z = geometry.attributes.position.getZ(i);
 
-  // Base smooth layer
   const base = fractalNoise(x * 0.05, z * 0.05, 3, 0.7, 1.5);
-  // Add a more random fine detail layer
   const detail = noise.noise(x * 0.3, z * 0.3, 0) * 0.2;
 
   const elevation = base + detail;
@@ -53,39 +50,55 @@ for (let i = 0; i < geometry.attributes.position.count; i++) {
 
 geometry.computeVertexNormals();
 
-// Terrain material
-const baseMaterial = new THREE.MeshBasicMaterial({
-  color: 0x556633,
-  wireframe: false,
-});
-
 // Helper: Extract vertices for convex chunk
 function extractChunkVertices(baseGeometry, startX, startZ, step, countX, countZ) {
   const positions = baseGeometry.attributes.position;
   const vertices = [];
-
   const rowLength = segments + 1;
 
   for (let z = 0; z <= countZ; z++) {
     for (let x = 0; x <= countX; x++) {
       const gridX = Math.floor(startX + x);
       const gridZ = Math.floor(startZ + z);
-
       if (gridX > segments || gridZ > segments) continue;
 
       const index = gridZ * rowLength + gridX;
-
       const vx = positions.getX(index);
       const vy = positions.getY(index);
       const vz = positions.getZ(index);
       vertices.push(new THREE.Vector3(vx, vy, vz));
-
-      // Add a base vertex for convex volume
       vertices.push(new THREE.Vector3(vx, 0, vz));
     }
   }
 
   return vertices;
+}
+
+// Helper: create black-and-white checker texture
+function createCheckerTexture(repeat = 8, color1 = '#000000', color2 = '#ffffff') {
+  const size = 128;
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const context = canvas.getContext('2d');
+
+  const block = size / 2;
+
+  // Draw first color squares (black)
+  context.fillStyle = color1;
+  context.fillRect(0, 0, block, block);
+  context.fillRect(block, block, block, block);
+
+  // Draw second color squares (white)
+  context.fillStyle = color2;
+  context.fillRect(block, 0, block, block);
+  context.fillRect(0, block, block, block);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(repeat, repeat);
+
+  return texture;
 }
 
 // Generate convex terrain chunks
@@ -110,8 +123,32 @@ for (let i = 0; i < chunksZ; i++) {
     if (vertices.length < 4) continue;
 
     const convexGeometry = new ConvexGeometry(vertices);
-    const chunkMesh = new THREE.Mesh(convexGeometry, baseMaterial.clone());
 
+    // Generate UVs for texture mapping
+    convexGeometry.computeBoundingBox();
+    const max = convexGeometry.boundingBox.max;
+    const min = convexGeometry.boundingBox.min;
+    const uvAttr = [];
+
+    for (let vi = 0; vi < convexGeometry.attributes.position.count; vi++) {
+      const vx = convexGeometry.attributes.position.getX(vi);
+      const vz = convexGeometry.attributes.position.getZ(vi);
+
+      const u = (vx - min.x) / (max.x - min.x);
+      const v = (vz - min.z) / (max.z - min.z);
+      uvAttr.push(u, v);
+    }
+    convexGeometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvAttr, 2));
+
+    // MeshStandardMaterial for lighting
+    const material = new THREE.MeshStandardMaterial({
+      map: createCheckerTexture(8, '#000000', '#ffffff'), // black & white
+      roughness: 0.8,
+      metalness: 0.0,
+      side: THREE.DoubleSide
+    });
+
+    const chunkMesh = new THREE.Mesh(convexGeometry, material);
     chunkMesh.position.set(0, 0, 0);
     chunkMesh.updateMatrixWorld();
 
