@@ -31,7 +31,7 @@ window.addEventListener('keydown', (event) => {
       break;
     }
     case 'b': {
-      const box = new RigidBody(boxPrefab.clone(), 1, 0.8, 0.8);
+      const box = new RigidBody(boxPrefab.clone(), 10, 0.8, 0.8);
       box.mesh.position.set(0, 15, 0);
       physicsEngine.addBody(box);
       projectiles.push(box);

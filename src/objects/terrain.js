@@ -6,9 +6,9 @@ import { mainScene } from '../render/scene';
 import physicsEngine from '../physics/physicsEngine';
 
 // Terrain Config
-const width = 400;
-const depth = 400;
-const segments = 100;
+const width = 600;
+const depth = 600;
+const segments = 150;
 const chunkSize = 20;
 const chunkResolution = 10;
 

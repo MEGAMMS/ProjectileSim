@@ -66,6 +66,5 @@ export function computeProjectedConvexArea (convex, airflowDirection) {
     const polygon = hullIndices.map(i => points2D[i]);
 
     const area = polygonArea(polygon);
-    console.log("Projected Area:", area);
     return area;
 }

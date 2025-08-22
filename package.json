@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "monotone-convex-hull-2d": "^1.0.1",
+    "stats.js": "^0.17.0",
     "three": "^0.176.0"
   }
 }

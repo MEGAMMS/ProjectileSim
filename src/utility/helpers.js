@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { mainScene } from "../render/scene"; 
+import { ConvexGeometry } from 'three/addons/geometries/ConvexGeometry.js';
 
 export function visualizePoint (point) {
     const sphere = new THREE.Mesh(
@@ -10,14 +11,26 @@ export function visualizePoint (point) {
     mainScene.add(sphere);
 }
 
-
-export function createConvexHelper (convex) {
-    return new THREE.Mesh(
-        convex,
-        new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true,transparent: false })
-    );
+export function createAxesHelper (body) {
+    // --- Add local XZ axis visualization ---
+    const axisHelper = new THREE.AxesHelper(1);
+    body.mesh.add(axisHelper);
+    axisHelper.visible = false;
+    axisHelper.material.depthTest = false;
+    axisHelper.material.transparent = true;
+    axisHelper.material.opacity = 0.7;
+    body.axisHelper = axisHelper;
 }
 
+export function createConvexHelper (body) {
+    const convexHelper = new THREE.Mesh(
+            new ConvexGeometry(body.convex),
+            new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true,transparent: false })
+    );
+    convexHelper.visible = false;
+    body.mesh.add(convexHelper);
+    body.convexHelper = convexHelper;
+}
 
 export function visualizeContact(contact, size = 0.02, color = 0xff0000) {
     const contactGroup = new THREE.Group();
@@ -50,7 +63,6 @@ export function visualizeContact(contact, size = 0.02, color = 0xff0000) {
     contactGroup.name = 'ContactVisualization';
     mainScene.add(contactGroup);
 }
-
 
 export function visualizeSimplex(points) {
   const simplex = points.map(e => e.point.clone());

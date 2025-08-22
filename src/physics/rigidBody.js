@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 import { mainScene } from '../render/scene';
 import { computeConvexPoints } from './convex';
-import { createConvexHelper, visualizePoint } from '../utility/helpers';
-import { ConvexGeometry } from 'three/addons/geometries/ConvexGeometry.js';
+import { createConvexHelper, createAxesHelper, visualizePoint } from '../utility/helpers';
+
+let showHelpers = false;
 
 
 class RigidBody {
@@ -15,9 +16,6 @@ class RigidBody {
     this.convex = this.lconvex.map(v => v.clone().applyMatrix4(mesh.matrixWorld));
     this.sphere = new THREE.Sphere().setFromPoints(this.convex);
 
-    // Visulize Collider
-    //mesh.add(createConvexHelper(new ConvexGeometry(this.convex)));
-
     this.mass = mass;
     this.inverseMass = (mass !== 0.0) ? (1.0 / mass) : 0.0;
     
@@ -29,12 +27,18 @@ class RigidBody {
 
     this.friction = friction;
     this.restitution = restitution;
+    this.dragCoefficient = 1;
     this.dragArea = 0;
 
     this.velocity = new THREE.Vector3();
     this.angularVelocity = new THREE.Vector3();
     this.forceAccum = new THREE.Vector3();
     this.torqueAccum = new THREE.Vector3();
+
+    // Visulize Helpers
+    createConvexHelper(this)
+    if (mass != 0.0) createAxesHelper(this);
+    this.toggleHelpers();
   }
 
     addForce(force,point) {
@@ -107,6 +111,11 @@ class RigidBody {
     
         this.clearForces();
     }
+
+    toggleHelpers() {
+    if (this.convexHelper) this.convexHelper.visible = showHelpers;
+    if (this.axisHelper) this.axisHelper.visible = showHelpers;
+  }
 }
 
 export default RigidBody; 
