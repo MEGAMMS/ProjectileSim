@@ -137,12 +137,13 @@ for (let i = 0; i < chunksZ; i++) {
     // Smooth MeshStandardMaterial
     const material = new THREE.MeshStandardMaterial({
       map: createCheckerTexture(8, '#000000', '#ffffff'),
-      roughness: 0.8,
-      metalness: 0.0,
+      roughness: 0.5,
+      metalness: 0.5,
       side: THREE.DoubleSide
     });
 
     const chunkMesh = new THREE.Mesh(convexGeometry, material);
+    chunkMesh.receiveShadow = true;
     chunkMesh.position.set(0, 0, 0);
     chunkMesh.updateMatrixWorld();
 

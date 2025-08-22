@@ -2,7 +2,6 @@ import * as THREE from 'three';
 import physicsEngine from '../physics/physicsEngine.js';
 import RigidBody from '../physics/rigidBody.js';
 
-const projectiles = [];
 
 // Prefabs for sphere and box
 const spherePrefab = new THREE.Mesh(
@@ -14,7 +13,7 @@ spherePrefab.receiveShadow = true;
 
 const boxPrefab = new THREE.Mesh(
   new THREE.BoxGeometry(0.5, 0.5, 0.5),
-  new THREE.MeshStandardMaterial({ color: 0xFF0000, roughness: 1.0, metalness: 0.0 })
+  new THREE.MeshStandardMaterial({ color: 0xFF0000, roughness: 0.8, metalness: 0.2 })
   
 );
 boxPrefab.castShadow = true;
@@ -40,4 +39,28 @@ window.addEventListener('keydown', (event) => {
   }
 });
 
-export {projectiles};
+
+// Shape factory
+export function createShape(type, props) {
+  let geometry;
+
+  switch(type) {
+    case "Box":
+      geometry = new THREE.BoxGeometry(props.width, props.height, props.depth);
+      break;
+    case "Sphere":
+      geometry = new THREE.SphereGeometry(props.radius, 32, 32);
+      break;
+    case "Cylinder":
+      geometry = new THREE.CylinderGeometry(props.radiusTop, props.radiusBottom, props.height, 32);
+      break;
+    case "Capsule":
+      geometry = new THREE.CapsuleGeometry(props.radius, props.length, 8, 16);
+      break;
+    default:
+      geometry = new THREE.BoxGeometry(1,1,1);
+  }
+
+  const material = new THREE.MeshStandardMaterial({ color: props.color || 0x00ff00 , transparent: true , opacity: 0.8 });
+  return new THREE.Mesh(geometry, material);
+}

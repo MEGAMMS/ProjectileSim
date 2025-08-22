@@ -2,6 +2,7 @@ import * as THREE from 'three';
 
 // Create the main scene
 const mainScene = new THREE.Scene();
+mainScene.background = new THREE.Color(0x87ceeb); // light sky blue
 
 // Sun-like lighting setup
 const ambientLight = new THREE.AmbientLight(0x87ceeb, 0.3);
@@ -35,7 +36,7 @@ const mainCamera = new THREE.PerspectiveCamera(
   1000
 );
 mainCamera.position.z = 5;
-mainCamera.position.set(50, 30, 50);
+mainCamera.position.set(10, 10, 10);
 mainCamera.lookAt(0, 0, 0);
 
 

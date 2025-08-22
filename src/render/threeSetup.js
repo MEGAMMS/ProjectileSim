@@ -11,7 +11,6 @@ mainRenderer.toneMapping = THREE.ACESFilmicToneMapping;
 mainRenderer.outputEncoding = THREE.sRGBEncoding;
 mainRenderer.physicallyCorrectLights = true;
 mainRenderer.shadowMap.enabled = true;
-mainRenderer.shadowMap.enabled = true;
 mainRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 // Responsivity

@@ -19,6 +19,7 @@
     "vite": "^6.3.5"
   },
   "dependencies": {
+    "lil-gui": "^0.20.0",
     "monotone-convex-hull-2d": "^1.0.1",
     "stats.js": "^0.17.0",
     "three": "^0.176.0"

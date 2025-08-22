@@ -2,11 +2,12 @@ import * as THREE from 'three';
 import Stats from 'stats.js';
 import { mainRenderer } from './render/threeSetup.js';
 import { mainScene, mainCamera } from './render/scene.js';
-import './objects/skybox.js';
+//import './objects/skybox.js';
 import './objects/terrain.js';
-import {projectiles} from './objects/projectiles.js';
+import './objects/projectileLauncher.js';
 import physicsEngine from './physics/physicsEngine.js';
 import * as forces from './physics/forces.js';
+import "./utility/gui.js"
 
 
 const stats = new Stats();
