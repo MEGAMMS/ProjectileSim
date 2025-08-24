@@ -7,7 +7,7 @@ let showHelpers = false;
 
 
 class RigidBody {
-  constructor(mesh, mass = 1, friction = 0.5, restitution = 0.8 , com = new THREE.Vector3()) {
+  constructor(mesh, mass = 1 , dragCoefficient = 0.5 , friction = 0.5, restitution = 0.8 , com = new THREE.Vector3()) {
     mesh.updateMatrixWorld(true);
     this.mesh = mesh;
     mainScene.add(mesh);
@@ -27,7 +27,7 @@ class RigidBody {
 
     this.friction = friction;
     this.restitution = restitution;
-    this.dragCoefficient = 1;
+    this.dragCoefficient = dragCoefficient;
     this.dragArea = 0;
 
     this.velocity = new THREE.Vector3();

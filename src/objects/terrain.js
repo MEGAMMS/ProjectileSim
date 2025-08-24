@@ -137,8 +137,8 @@ for (let i = 0; i < chunksZ; i++) {
     // Smooth MeshStandardMaterial
     const material = new THREE.MeshStandardMaterial({
       map: createCheckerTexture(8, '#000000', '#ffffff'),
-      roughness: 0.5,
-      metalness: 0.5,
+      roughness: 0.7,
+      metalness: 0.3,
       side: THREE.DoubleSide
     });
 

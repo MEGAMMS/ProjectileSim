@@ -2,7 +2,6 @@ import * as THREE from 'three';
 import Stats from 'stats.js';
 import { mainRenderer } from './render/threeSetup.js';
 import { mainScene, mainCamera } from './render/scene.js';
-//import './objects/skybox.js';
 import './objects/terrain.js';
 import './objects/projectileLauncher.js';
 import physicsEngine from './physics/physicsEngine.js';
@@ -22,8 +21,8 @@ setInterval(() => {
       if (body.mass == 0.0) return;
       forces.applyDamping(body);
       forces.applyGravity(body);
-      forces.applyAirDynamics(body);
-      forces.applyMagnusForce(body);
+      //forces.applyAirDynamics(body);
+      //forces.applyMagnusForce(body);
     });
 
     physicsEngine.update(FIXED_DELTA);
