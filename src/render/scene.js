@@ -12,8 +12,8 @@ mainScene.add(ambientLight);
 const sunLight = new THREE.DirectionalLight(0xffffff, 1.2);
 sunLight.position.set(100, 200, 100);
 sunLight.castShadow = true;
-sunLight.shadow.mapSize.width = 2048;
-sunLight.shadow.mapSize.height = 2048;
+sunLight.shadow.mapSize.width = 1024;
+sunLight.shadow.mapSize.height = 1024;
 sunLight.shadow.camera.near = 0.5;
 sunLight.shadow.camera.far = 500;
 sunLight.shadow.camera.left = -100;
@@ -35,9 +35,7 @@ const mainCamera = new THREE.PerspectiveCamera(
   0.1,
   1000
 );
-mainCamera.position.z = 5;
-mainCamera.position.set(10, 14, 10);
-mainCamera.lookAt(0, 0, 0);
+mainCamera.position.set(5, 10, 5);
 
 
 export { mainScene, mainCamera };

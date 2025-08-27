@@ -17,7 +17,7 @@ export const updateWind = () => windSpeed.set(worldOptions.windX,worldOptions.wi
 
 /* Forces */
 export function applyGravity(body) {
-    body.addForce(gravityForce.clone().multiplyScalar(body.mass));
+    body.addForce(gravityForce.clone().multiplyScalar(body.mass),"gravity");
 }
 
 export function applyDamping (body) {
@@ -31,7 +31,7 @@ export function applyAirDynamics(body) {
     if (v === 0) return;
     const dragMagnitude = 0.5 * worldOptions.airDensity * v * v * body.dragArea * body.dragCoefficient;
     const dragDirection = relVelocity.clone().normalize().negate();
-    body.addForce(dragDirection.multiplyScalar(dragMagnitude));
+    body.addForce(dragDirection.multiplyScalar(dragMagnitude),"drag");
 }
 
 export function applyMagnusForce(body) {
@@ -49,5 +49,5 @@ export function applyMagnusForce(body) {
     const magnusForce = new THREE.Vector3().crossVectors(body.angularVelocity, relVelocity).multiplyScalar(S);
 
     // Apply to body
-    body.addForce(magnusForce);
+    body.addForce(magnusForce,"magnus");
 }

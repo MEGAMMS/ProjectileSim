@@ -21,8 +21,8 @@ setInterval(() => {
       if (body.mass == 0.0) return;
       forces.applyDamping(body);
       forces.applyGravity(body);
-      //forces.applyAirDynamics(body);
-      //forces.applyMagnusForce(body);
+      forces.applyAirDynamics(body);
+      forces.applyMagnusForce(body);
     });
 
     physicsEngine.update(FIXED_DELTA);

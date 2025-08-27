@@ -6,9 +6,9 @@ import { mainScene } from '../render/scene';
 import physicsEngine from '../physics/physicsEngine';
 
 // Terrain Config
-const width = 600;
-const depth = 600;
-const segments = 150;
+const width = 200;
+const depth = 200;
+const segments = 50;
 const chunkSize = 20;
 const chunkResolution = 10;
 
@@ -17,7 +17,7 @@ const geometry = new THREE.PlaneGeometry(width, depth, segments, segments);
 geometry.rotateX(-Math.PI / 2);
 
 const noise = new ImprovedNoise();
-const height = 15; // taller hills
+const height = 10; // taller hills
 
 // Fractal noise function
 function fractalNoise(x, z, octaves = 4, persistence = 0.6, lacunarity = 1.5) {

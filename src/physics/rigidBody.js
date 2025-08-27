@@ -2,8 +2,15 @@ import * as THREE from 'three';
 import { mainScene } from '../render/scene';
 import { computeConvexPoints } from './convex';
 import { createConvexHelper, createAxesHelper, visualizePoint } from '../utility/helpers';
+import { monitorOptions } from '../objects/projectileLauncher';
 
-let showHelpers = false;
+
+const forceColors = {
+    gravity: 0x0000ff, // blue
+    drag: 0xff0000,    // red
+    magnus: 0x00ff00,  // green
+    custom: 0xffff00,  // yellow
+};
 
 
 class RigidBody {
@@ -39,12 +46,11 @@ class RigidBody {
     createConvexHelper(this)
     if (mass != 0.0) createAxesHelper(this);
     this.toggleHelpers();
+    this.forceArrows = {};
   }
 
-    addForce(force,point) {
+    addForce(force, name ,point = this.comWorld) {
         if (this.mass === 0.0) return;
-
-        if (point == null) point = this.comWorld;
 
         // Linear
         this.forceAccum.add(force);
@@ -53,6 +59,30 @@ class RigidBody {
         const r = new THREE.Vector3().subVectors(point, this.mesh.position);
         const torque = new THREE.Vector3().crossVectors(r, force);
         this.torqueAccum.add(torque);
+
+        if (monitorOptions.showForces) {
+            
+            if (this.forceArrows[name]) {
+                const arrow = this.forceArrows[name];
+                arrow.position.copy(point);
+                arrow.setDirection(force.clone().normalize());
+                arrow.setLength(force.length() * 0.1); // same scale factor
+                return;
+            }
+
+            // Create arrow
+            const arrow = new THREE.ArrowHelper(
+                force.clone().normalize(),
+                point,
+                force.length() * 0.1,
+                forceColors[name]
+            );
+
+            // Add to scene and save reference
+            mainScene.add(arrow);
+            this.forceArrows[name] = arrow;
+
+        }
     }
 
     addImpulse(impulse , point) {
@@ -70,6 +100,10 @@ class RigidBody {
         this.angularVelocity.add(angularAcc);
     }
 
+
+
+
+
     clearForces() {
         this.forceAccum.set(0, 0, 0);
         this.torqueAccum.set(0, 0, 0);
@@ -78,8 +112,8 @@ class RigidBody {
     integrate(deltaTime) {
         if (this.mass === 0.0 || deltaTime <= 0.0) return;
 
-        this.comWorld = this.comWorld.copy(this.com).applyMatrix4(this.mesh.matrixWorld);
-        //visualizePoint(this.comWorld);
+        this.comWorld.copy(this.com).applyMatrix4(this.mesh.matrixWorld);
+        if (monitorOptions.showPath) visualizePoint(this.comWorld);
     
         // --- Linear ---
         const acceleration = this.forceAccum.clone().multiplyScalar(this.inverseMass);
@@ -94,27 +128,30 @@ class RigidBody {
     
         // --- Angular: Rotate orientation based on angular velocity ---
         if (this.angularVelocity.lengthSq() > 0.0) {
-            const orientation = this.mesh.quaternion;
-            const spin = new THREE.Quaternion(
-                this.angularVelocity.x * 0.5 * deltaTime,
-                this.angularVelocity.y * 0.5 * deltaTime,
-                this.angularVelocity.z * 0.5 * deltaTime,
-                0
-            );
-            spin.multiply(orientation);
-            orientation.x += spin.x;
-            orientation.y += spin.y;
-            orientation.z += spin.z;
-            orientation.w += spin.w;
-            orientation.normalize();
-        }
+        // Quaternion derivative: q' = 0.5 * ω_quat * q
+        const omegaQuat = new THREE.Quaternion(
+            this.angularVelocity.x * deltaTime * 0.5,
+            this.angularVelocity.y * deltaTime * 0.5,
+            this.angularVelocity.z * deltaTime * 0.5,
+            0
+        );
+
+        omegaQuat.multiply(this.mesh.quaternion);
+
+        this.mesh.quaternion.x += omegaQuat.x;
+        this.mesh.quaternion.y += omegaQuat.y;
+        this.mesh.quaternion.z += omegaQuat.z;
+        this.mesh.quaternion.w += omegaQuat.w;
+
+        this.mesh.quaternion.normalize();   // prevent drift
+    }
     
         this.clearForces();
     }
 
     toggleHelpers() {
-    if (this.convexHelper) this.convexHelper.visible = showHelpers;
-    if (this.axisHelper) this.axisHelper.visible = showHelpers;
+    if (this.convexHelper) this.convexHelper.visible = monitorOptions.showHelpers;
+    if (this.axisHelper) this.axisHelper.visible = monitorOptions.showHelpers;
   }
 }
 

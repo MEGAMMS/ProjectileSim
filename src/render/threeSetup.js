@@ -4,7 +4,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { mainCamera } from './scene';
 
 // Set up the main renderer
-const mainRenderer = new THREE.WebGLRenderer({ antialias: true });
+const mainRenderer = new THREE.WebGLRenderer({ antialias: false });
 mainRenderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(mainRenderer.domElement);
 mainRenderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -23,6 +23,7 @@ function onWindowResize() {
 
 // Set up Controls
 const controls = new OrbitControls(mainCamera, mainRenderer.domElement);
+controls.target.set(0, 8, 0);
 controls.update();
 
 // Create Loaders

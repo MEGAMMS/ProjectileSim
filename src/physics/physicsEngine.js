@@ -22,6 +22,7 @@ class PhysicsEngine {
         this.bodies.forEach(b => {
             if (b.mass == 0.0) return;
             b.mesh.updateMatrixWorld(true);
+            b.comWorld.copy(b.com).applyMatrix4(b.mesh.matrixWorld);
             b.convex = b.lconvex.map(v => v.clone().applyMatrix4(b.mesh.matrixWorld));
             b.dragArea = computeProjectedConvexArea(b.convex,b.velocity.clone().negate());
         });

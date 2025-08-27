@@ -14,9 +14,6 @@ export function createShape(type, props) {
     case "Cylinder":
       geometry = new THREE.CylinderGeometry(props.radiusTop, props.radiusBottom, props.height, 32);
       break;
-    case "Capsule":
-      geometry = new THREE.CapsuleGeometry(props.radius, props.length, 8, 16);
-      break;
     default:
       geometry = new THREE.BoxGeometry(1,1,1);
   }
