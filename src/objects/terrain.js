@@ -10,7 +10,8 @@ const width = 200;
 const depth = 200;
 const segments = 50;
 const chunkSize = 20;
-const chunkResolution = 10;
+const step = width / segments;
+const chunkResolution = Math.round(chunkSize / step);
 
 // Create base plane geometry
 const geometry = new THREE.PlaneGeometry(width, depth, segments, segments);
@@ -97,9 +98,8 @@ function createCheckerTexture(repeat = 8, color1 = '#000000', color2 = '#ffffff'
 }
 
 // Generate convex terrain chunks
-const step = width / segments;
-const chunksX = Math.floor(width / chunkSize);
-const chunksZ = Math.floor(depth / chunkSize);
+const chunksX = Math.round(width / chunkSize);
+const chunksZ = Math.round(depth / chunkSize);
 
 for (let i = 0; i < chunksZ; i++) {
   for (let j = 0; j < chunksX; j++) {

@@ -2,9 +2,9 @@ import * as THREE from 'three';
 import Stats from 'stats.js';
 import { mainRenderer } from './render/threeSetup.js';
 import { mainScene, mainCamera } from './render/scene.js';
+import physicsEngine from './physics/physicsEngine.js';
 import './objects/terrain.js';
 import './objects/projectileLauncher.js';
-import physicsEngine from './physics/physicsEngine.js';
 import * as forces from './physics/forces.js';
 import "./utility/gui.js"
 
@@ -22,6 +22,7 @@ setInterval(() => {
       forces.applyDamping(body);
       forces.applyGravity(body);
       forces.applyAirDynamics(body);
+      forces.applyWind(body);
       forces.applyMagnusForce(body);
     });
 

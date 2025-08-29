@@ -2,14 +2,14 @@ import * as THREE from 'three';
 import { mainScene } from '../render/scene';
 import { computeConvexPoints } from './convex';
 import { createConvexHelper, createAxesHelper, visualizePoint } from '../utility/helpers';
-import { monitorOptions } from '../objects/projectileLauncher';
+import { monitorOptions } from '../objects/options';
 
 
 const forceColors = {
     gravity: 0x0000ff, // blue
     drag: 0xff0000,    // red
     magnus: 0x00ff00,  // green
-    custom: 0xffff00,  // yellow
+    wind: 0xffff00,  // yellow
 };
 
 
@@ -41,6 +41,14 @@ class RigidBody {
     this.angularVelocity = new THREE.Vector3();
     this.forceAccum = new THREE.Vector3();
     this.torqueAccum = new THREE.Vector3();
+
+    // Tracking Properties
+    this.speed = 0;
+    this.kineticEnergy = 0;
+    this.flightTime = 0;
+    this.distanceTraveled = 0;
+    this.lastPosition = this.mesh.position.clone();
+    this.contact = false;
 
     // Visulize Helpers
     createConvexHelper(this)
@@ -100,10 +108,6 @@ class RigidBody {
         this.angularVelocity.add(angularAcc);
     }
 
-
-
-
-
     clearForces() {
         this.forceAccum.set(0, 0, 0);
         this.torqueAccum.set(0, 0, 0);
@@ -145,7 +149,15 @@ class RigidBody {
 
         this.mesh.quaternion.normalize();   // prevent drift
     }
-    
+
+        // Update Tracking
+        this.speed = this.velocity.length();
+        this.kineticEnergy = 0.5 * this.mass * this.speed * this.speed;
+        if (!this.contact) {
+            this.flightTime += deltaTime;
+            this.distanceTraveled += this.mesh.position.distanceTo(this.lastPosition);
+            this.lastPosition.copy(this.mesh.position);
+        }
         this.clearForces();
     }
 

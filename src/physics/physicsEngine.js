@@ -13,7 +13,6 @@ class PhysicsEngine {
 
 
     update(deltaTime) {
-
         // Integrate full timestep
         for (const body of this.bodies) {
             body.integrate(deltaTime);
@@ -41,6 +40,8 @@ class PhysicsEngine {
 
                 // 💥 Collision response
                 if (contact) {
+                    A.contact = true;
+                    B.contact = true;
                     resolveCollision(A, B, contact);
                     applyPositionalCorrection(A, B, contact);
                 }

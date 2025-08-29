@@ -4,7 +4,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { mainCamera } from './scene';
 
 // Set up the main renderer
-const mainRenderer = new THREE.WebGLRenderer({ antialias: false });
+const mainRenderer = new THREE.WebGLRenderer({ antialias: true });
 mainRenderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(mainRenderer.domElement);
 mainRenderer.toneMapping = THREE.ACESFilmicToneMapping;

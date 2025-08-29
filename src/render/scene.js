@@ -35,7 +35,7 @@ const mainCamera = new THREE.PerspectiveCamera(
   0.1,
   1000
 );
-mainCamera.position.set(5, 10, 5);
+mainCamera.position.set(0, 10, 5);
 
 
 export { mainScene, mainCamera };
