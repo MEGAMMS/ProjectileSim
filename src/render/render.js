@@ -2,10 +2,11 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import physicsEngine from '../physics/physicsEngine';
 import { lastPhysicsTime , physicsIntervalDuration } from '../physics/physics';
+import { TransformControls } from 'three/addons/controls/TransformControls.js';
 
 
 // Set up the main renderer
-const mainRenderer = new THREE.WebGLRenderer({ antialias: true });
+export const mainRenderer = new THREE.WebGLRenderer({ antialias: true });
 mainRenderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(mainRenderer.domElement);
 mainRenderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -43,8 +44,8 @@ fillLight.position.set(-50, 100, -50);
 mainScene.add(fillLight);
 
 
-// Set up the main camera
-const mainCamera = new THREE.PerspectiveCamera(
+// Main Camera
+export const mainCamera = new THREE.PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight,
   0.1,
@@ -52,11 +53,36 @@ const mainCamera = new THREE.PerspectiveCamera(
 );
 mainCamera.position.set(0, 10, 5);
 
+// Gizmo Camera
+const gizmoSize = 1; // tweak this to make the gizmo the right size on screen
+const gizmoCamera = new THREE.OrthographicCamera(
+  -gizmoSize, gizmoSize,
+  gizmoSize, -gizmoSize,
+  -1000, 1000
+);
+
+function updateGizmoCamera() {
+  // Gizmo camera stays at origin but rotates to match main camera
+  gizmoCamera.position.copy(mainCamera.position);
+  gizmoCamera.quaternion.copy(mainCamera.quaternion);
+  gizmoCamera.updateMatrixWorld();
+}
+
 
 // Set up Controls
 const controls = new OrbitControls(mainCamera, mainRenderer.domElement);
+window.orbitControls = controls;
 controls.target.set(0, 8, 0);
 controls.update();
+
+export const transform = new TransformControls(gizmoCamera, mainRenderer.domElement);
+const gizmo = transform.getHelper();
+mainScene.add(gizmo);
+
+// Disable OrbitControls while dragging
+transform.addEventListener("dragging-changed", (event) => {
+  window.orbitControls.enabled = !event.value;
+});
 
 
 // Responsivity
@@ -69,8 +95,9 @@ function onWindowResize() {
 
 
 mainRenderer.setAnimationLoop( (t) => {
+  updateGizmoCamera();
+
    physicsEngine.bodies.forEach(body => {
-    
         // Interpolation factor (alpha) between previous and current physics step
         const now = performance.now();
         const alpha = (now - lastPhysicsTime) / physicsIntervalDuration;

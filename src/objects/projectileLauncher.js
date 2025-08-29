@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { mainScene } from '../render/render.js';
+import { mainRenderer , mainScene , mainCamera, transform } from '../render/render.js';
 import RigidBody from '../physics/rigidBody.js';
 import physicsEngine from '../physics/physicsEngine.js';
 import {createShape} from './projectiles.js';
@@ -37,6 +37,23 @@ arrow.quaternion.setFromUnitVectors(
 projectileFactory.add(arrow);
 
 
+// CENTER OF MASS GIZMO
+const comMarker = new THREE.Mesh(
+  new THREE.SphereGeometry(0.05),
+  new THREE.MeshBasicMaterial({ color: 0xff0000 })
+);
+projectileFactory.add(comMarker);
+
+transform.attach(comMarker);
+
+// Sync with physics options
+transform.addEventListener("change", () => {
+  comMarker.updateMatrixWorld(true);
+  const position = comMarker.position.clone().applyMatrix4(comMarker.matrixWorld).sub(projectileFactory.position);
+  dynamicsOptions.centerOfMass.copy(position);
+});
+
+
 // Projectiles
 let currentShape = createShape(shapeOptions.type, shapeOptions);
 projectileFactory.add(currentShape);
@@ -64,7 +81,9 @@ function createBody (projectile) {
     dynamicsOptions.mass ,
     dynamicsOptions.dragCoefficient,
     dynamicsOptions.friction,
-    dynamicsOptions.restitution);
+    dynamicsOptions.restitution,
+    dynamicsOptions.centerOfMass
+  );
   buildStatsFolders(projectileBody);
   return projectileBody;
 }

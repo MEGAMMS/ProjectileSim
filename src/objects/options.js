@@ -1,3 +1,5 @@
+import { Vector3 } from "three";
+
 // Global physics world options
 export const worldOptions = {
   simulationSpeed: 1,
@@ -24,6 +26,7 @@ export const shapeOptions = {
 
 // Projectile dynamics
 export const dynamicsOptions = {
+  centerOfMass: new Vector3(),
   initialVelocity: 30,
   mass: 1,
   dragCoefficient: 0.5,
