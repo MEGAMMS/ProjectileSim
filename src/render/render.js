@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import physicsEngine from '../physics/physicsEngine';
+import { lastPhysicsTime , physicsIntervalDuration } from '../physics/physics';
 
 
 // Set up the main renderer
@@ -66,4 +68,24 @@ function onWindowResize() {
 }
 
 
-mainRenderer.setAnimationLoop( (t) => mainRenderer.render(mainScene, mainCamera) );
+mainRenderer.setAnimationLoop( (t) => {
+   physicsEngine.bodies.forEach(body => {
+    
+        // Interpolation factor (alpha) between previous and current physics step
+        const now = performance.now();
+        const alpha = (now - lastPhysicsTime) / physicsIntervalDuration;
+
+        // Interpolated position
+        body.mesh.position.lerpVectors(body.prevPosition, body.position, alpha);
+        // Interpolated rotation
+        body.mesh.quaternion.copy(body.prevQuaternion).slerp(body.quaternion, alpha);
+
+        // No Interpolation
+        /*
+        body.mesh.position.copy(body.position);
+        body.mesh.quaternion.copy(body.quaternion);
+        */
+    });
+
+  mainRenderer.render(mainScene, mainCamera)
+} );

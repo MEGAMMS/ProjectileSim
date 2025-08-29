@@ -4,6 +4,8 @@ import { ImprovedNoise } from 'three/examples/jsm/math/ImprovedNoise.js';
 import RigidBody from '../physics/rigidBody';
 import { mainScene } from '../render/render';
 import physicsEngine from '../physics/physicsEngine';
+import { Quaternion } from 'three';
+import { Vector3 } from 'three';
 
 // Terrain Config
 const width = 200;
@@ -18,7 +20,7 @@ const geometry = new THREE.PlaneGeometry(width, depth, segments, segments);
 geometry.rotateX(-Math.PI / 2);
 
 const noise = new ImprovedNoise();
-const height = 10; // taller hills
+const height = 8; // taller hills
 
 // Fractal noise function
 function fractalNoise(x, z, octaves = 4, persistence = 0.6, lacunarity = 1.5) {
@@ -144,11 +146,7 @@ for (let i = 0; i < chunksZ; i++) {
 
     const chunkMesh = new THREE.Mesh(convexGeometry, material);
     chunkMesh.receiveShadow = true;
-    chunkMesh.position.set(0, 0, 0);
-    chunkMesh.updateMatrixWorld();
-
-    const chunk = new RigidBody(chunkMesh, 0, 0.8, 0.8); // mass 0 for static terrain
-    mainScene.add(chunkMesh);
+    const chunk = new RigidBody(chunkMesh, new Vector3() , new Quaternion() , 0, 0.8, 0.8); // mass 0 for static terrain
     physicsEngine.addBody(chunk);
   }
 }

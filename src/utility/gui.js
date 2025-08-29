@@ -88,9 +88,9 @@ export function buildStatsFolders(projectile) {
 
   // --- Position Folder ---
   const posFolder = statsGui.addFolder("Position");
-  posFolder.add(projectile.mesh.position, "x").name("X").listen();
-  posFolder.add(projectile.mesh.position, "y").name("Y").listen();
-  posFolder.add(projectile.mesh.position, "z").name("Z").listen();
+  posFolder.add(projectile.position, "x").name("X").listen();
+  posFolder.add(projectile.position, "y").name("Y").listen();
+  posFolder.add(projectile.position, "z").name("Z").listen();
 
   // --- Motion Stats Folder ---
   const motionFolder = statsGui.addFolder("Motion Stats");

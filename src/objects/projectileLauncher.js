@@ -57,9 +57,14 @@ export function updateShape() {
 
 
 function createBody (projectile) {
-  const projectileBody = new RigidBody(projectile, dynamicsOptions.mass , dynamicsOptions.dragCoefficient, dynamicsOptions.friction, dynamicsOptions.restitution);
-  projectile.position.copy(projectileFactory.position);
-  projectile.rotation.copy(projectileFactory.rotation);
+  const projectileBody = new RigidBody(
+    projectile,
+    projectileFactory.position,
+    projectileFactory.quaternion,
+    dynamicsOptions.mass ,
+    dynamicsOptions.dragCoefficient,
+    dynamicsOptions.friction,
+    dynamicsOptions.restitution);
   buildStatsFolders(projectileBody);
   return projectileBody;
 }

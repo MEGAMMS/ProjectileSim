@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { mainScene } from "../render/render"; 
+import { mainScene } from "../render/render" 
 import { ConvexGeometry } from 'three/addons/geometries/ConvexGeometry.js';
 
 export function visualizePoint (point) {
@@ -24,7 +24,7 @@ export function createAxesHelper (body) {
 
 export function createConvexHelper (body) {
     const convexHelper = new THREE.Mesh(
-            new ConvexGeometry(body.convex),
+            new ConvexGeometry(body.lconvex),
             new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true,transparent: false })
     );
     convexHelper.visible = false;

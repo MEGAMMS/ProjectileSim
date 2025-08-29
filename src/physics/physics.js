@@ -1,20 +1,19 @@
 import physicsEngine from './physicsEngine.js';
-import Stats from 'stats.js';
 import * as forces from './forces.js';
 import { worldOptions } from '../objects/options.js';
 
 
-const stats = new Stats();
-document.body.appendChild(stats.dom);
-
 // fixed timestep for physics
 const FIXED_DELTA = 1 / 60;
+export let lastPhysicsTime = performance.now();
 let physicsInterval;
+export let physicsIntervalDuration;
 
 export function startPhysicsLoop() {
     if (physicsInterval) clearInterval(physicsInterval);
+    physicsIntervalDuration = (1 / worldOptions.simulationSpeed) * FIXED_DELTA * 1000;
     physicsInterval = setInterval(() => {
-        stats.update();
+        lastPhysicsTime = performance.now();
         physicsEngine.bodies.forEach(body => {
             if (body.mass === 0) return;
             forces.applyDamping(body);
@@ -24,7 +23,7 @@ export function startPhysicsLoop() {
             forces.applyMagnusForce(body); 
         });
         physicsEngine.update(FIXED_DELTA);
-    }, (1 / worldOptions.simulationSpeed) * FIXED_DELTA * 1000);
+    },physicsIntervalDuration) ;
 }
     
 // Start initially
