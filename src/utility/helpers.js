@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { mainScene } from "../render/scene"; 
+import { mainScene } from "../render/render"; 
 import { ConvexGeometry } from 'three/addons/geometries/ConvexGeometry.js';
 
 export function visualizePoint (point) {

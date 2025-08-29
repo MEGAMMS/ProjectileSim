@@ -1,5 +1,6 @@
 // Global physics world options
 export const worldOptions = {
+  simulationSpeed: 1,
   damping: 0.99,
   gravityY: -9.81,
   airDensity: 1.225,
@@ -35,12 +36,4 @@ export const monitorOptions = {
   showForces: false,
   showPath: false,
   showHelpers: false
-};
-
-// Stats object
-const projectileStats = {
-  speed: 0,
-  kineticEnergy: 0,
-  flightTime: 0,
-  distanceTraveled: 0,
 };

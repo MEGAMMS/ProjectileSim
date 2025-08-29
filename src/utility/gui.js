@@ -2,6 +2,7 @@ import GUI from "lil-gui";
 import { worldOptions , shapeOptions , dynamicsOptions , monitorOptions } from "../objects/options";
 import { updateShape } from "../objects/projectileLauncher";
 import { updateGravity, updateWind } from "../physics/forces"; 
+import { startPhysicsLoop } from "../physics/physics";
 
 
 // ================== MAIN CONTROL GUI (RIGHT) ==================
@@ -51,6 +52,7 @@ gui.addColor(shapeOptions, "color").onChange(updateShape);
 
 // World physics folder
 const worldFolder = gui.addFolder("Gravity & Environment");
+worldFolder.add(worldOptions, "simulationSpeed", 0.1, 2).step(0.1).name("Simulation Speed").onChange(startPhysicsLoop);
 worldFolder.add(worldOptions, "damping", 0.9, 1).step(0.001).name("Damping");
 worldFolder.add(worldOptions, "gravityY", -20, 0).step(0.1).name("Gravity (Y)").onChange(updateGravity);
 worldFolder.add(worldOptions, "airDensity", 0, 3).step(0.01).name("Air Density");

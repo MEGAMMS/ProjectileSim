@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry.js';
 import { ImprovedNoise } from 'three/examples/jsm/math/ImprovedNoise.js';
 import RigidBody from '../physics/rigidBody';
-import { mainScene } from '../render/scene';
+import { mainScene } from '../render/render';
 import physicsEngine from '../physics/physicsEngine';
 
 // Terrain Config

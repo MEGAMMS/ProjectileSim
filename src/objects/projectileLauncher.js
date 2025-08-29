@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { mainScene } from '../render/scene.js';
+import { mainScene } from '../render/render.js';
 import RigidBody from '../physics/rigidBody.js';
 import physicsEngine from '../physics/physicsEngine.js';
 import {createShape} from './projectiles.js';

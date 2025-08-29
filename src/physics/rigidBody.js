@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { mainScene } from '../render/scene';
+import { mainScene } from '../render/render';
 import { computeConvexPoints } from './convex';
 import { createConvexHelper, createAxesHelper, visualizePoint } from '../utility/helpers';
 import { monitorOptions } from '../objects/options';
