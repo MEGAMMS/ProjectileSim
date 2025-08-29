@@ -39,7 +39,7 @@ class RigidBody {
     this.inertiaTensor = (2 / 5) * mass;
     this.invInertiaTensor = 1 / this.inertiaTensor;
 
-    this.com = com;
+    this.com = com.clone();
     this.comWorld = new THREE.Vector3().copy(com).applyMatrix4(this.matrix);
 
     this.friction = friction;

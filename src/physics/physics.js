@@ -20,7 +20,7 @@ export function startPhysicsLoop() {
             forces.applyGravity(body);
             forces.applyAirDynamics(body);
             forces.applyWind(body);
-            //forces.applyMagnusForce(body); 
+            forces.applyMagnusForce(body); 
         });
         physicsEngine.update(FIXED_DELTA);
     },physicsIntervalDuration) ;

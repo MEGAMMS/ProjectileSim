@@ -107,11 +107,12 @@ mainRenderer.setAnimationLoop( (t) => {
         // Interpolated rotation
         body.mesh.quaternion.copy(body.prevQuaternion).slerp(body.quaternion, alpha);
 
-        // No Interpolation
         /*
+        // No Interpolation
         body.mesh.position.copy(body.position);
         body.mesh.quaternion.copy(body.quaternion);
         */
+        
     });
 
   mainRenderer.render(mainScene, mainCamera)
