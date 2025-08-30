@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { mainScene } from '../render/render';
-import { computeConvexPoints } from './convex';
+import { getPointsBuffer } from './convex';
 import { createConvexHelper, createAxesHelper, visualizePoint } from '../utility/helpers';
 import { monitorOptions } from '../objects/options';
 import { Quaternion } from 'three';
@@ -28,7 +28,7 @@ class RigidBody {
     this.prevPosition = this.position.clone();
     this.prevQuaternion = this.quaternion.clone();
 
-    this.lconvex = computeConvexPoints(mesh.geometry);
+    this.lconvex = getPointsBuffer(mesh.geometry);
     this.convex = this.lconvex.map(v => v.clone().applyMatrix4(this.matrix));
     this.lsphere = new THREE.Sphere().setFromPoints(this.lconvex);
     this.sphere = this.lsphere.clone().applyMatrix4(this.matrix);
@@ -145,23 +145,34 @@ class RigidBody {
     
         // --- Angular: Rotate orientation based on angular velocity ---
         if (this.angularVelocity.lengthSq() > 0.0) {
-        // Quaternion derivative: q' = 0.5 * ω_quat * q
-        const omegaQuat = new THREE.Quaternion(
-            this.angularVelocity.x * deltaTime * 0.5,
-            this.angularVelocity.y * deltaTime * 0.5,
-            this.angularVelocity.z * deltaTime * 0.5,
-            0
-        );
+            // ω as quaternion (0, x, y, z)
+            const omegaQuat = new THREE.Quaternion(
+                this.angularVelocity.x,
+                this.angularVelocity.y,
+                this.angularVelocity.z,
+                0
+            );
 
-        omegaQuat.multiply(this.quaternion);
+            // q' = 0.5 * ω * q
+            const qDot = new THREE.Quaternion(
+                0, 0, 0, 0
+            );
+            qDot.copy(omegaQuat).multiply(this.quaternion);
 
-        this.quaternion.x += omegaQuat.x;
-        this.quaternion.y += omegaQuat.y;
-        this.quaternion.z += omegaQuat.z;
-        this.quaternion.w += omegaQuat.w;
+            // scale by 0.5
+            qDot.x *= 0.5;
+            qDot.y *= 0.5;
+            qDot.z *= 0.5;
+            qDot.w *= 0.5;
 
-        this.quaternion.normalize();   // prevent drift
-    }
+            // integrate: q = q + q' * dt
+            this.quaternion.x += qDot.x * deltaTime;
+            this.quaternion.y += qDot.y * deltaTime;
+            this.quaternion.z += qDot.z * deltaTime;
+            this.quaternion.w += qDot.w * deltaTime;
+
+            this.quaternion.normalize(); // prevent drift
+        }
 
         // Update Tracking
         this.speed = this.velocity.length();

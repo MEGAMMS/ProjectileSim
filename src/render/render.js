@@ -100,19 +100,17 @@ mainRenderer.setAnimationLoop( (t) => {
    physicsEngine.bodies.forEach(body => {
         // Interpolation factor (alpha) between previous and current physics step
         const now = performance.now();
-        const alpha = (now - lastPhysicsTime) / physicsIntervalDuration;
-
+        let alpha = (now - lastPhysicsTime) / physicsIntervalDuration;
+        alpha = THREE.MathUtils.clamp(alpha, 0, 1);
+        
         // Interpolated position
         body.mesh.position.lerpVectors(body.prevPosition, body.position, alpha);
         // Interpolated rotation
         body.mesh.quaternion.copy(body.prevQuaternion).slerp(body.quaternion, alpha);
-
-        /*
-        // No Interpolation
-        body.mesh.position.copy(body.position);
-        body.mesh.quaternion.copy(body.quaternion);
-        */
         
+        // No Interpolation
+        //body.mesh.position.copy(body.position);
+        //body.mesh.quaternion.copy(body.quaternion);
     });
 
   mainRenderer.render(mainScene, mainCamera)

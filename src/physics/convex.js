@@ -1,9 +1,8 @@
 import * as THREE from "three";
-import { ConvexGeometry } from 'three/addons/geometries/ConvexGeometry.js';
 import convexHull from 'monotone-convex-hull-2d';
 
 
-function getPointsBuffer (geometry) {
+export function getPointsBuffer (geometry) {
     const points = [];
     const posAttr = geometry.getAttribute('position');
     for (let i = 0; i < posAttr.count; i++) {
@@ -11,14 +10,6 @@ function getPointsBuffer (geometry) {
     }
     return points;
 }
-
-export function computeConvexPoints (geometry) {
-    const geometryPoints = getPointsBuffer(geometry);
-    const convex = new ConvexGeometry(geometryPoints);
-    return getPointsBuffer(convex);
-}
-
-
 
 function polygonArea(polygonPoints) {
     let area = 0;
