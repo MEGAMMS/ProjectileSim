@@ -1,6 +1,5 @@
 import { getContact } from "./collision/collisionDetection";
 import { applyPositionalCorrection, resolveCollision } from "./collision/collisionResponse";
-import { computeProjectedConvexArea } from "./convex";
 
 class PhysicsEngine {
     constructor() {
@@ -24,7 +23,6 @@ class PhysicsEngine {
             b.comWorld.copy(b.com).applyMatrix4(b.matrix);
             b.convex = b.lconvex.map(v => v.clone().applyMatrix4(b.matrix));
             b.sphere = b.lsphere.clone().applyMatrix4(b.matrix);
-            b.dragArea = computeProjectedConvexArea(b.convex,b.velocity.clone().negate());
         });
 
         

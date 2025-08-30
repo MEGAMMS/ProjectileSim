@@ -18,30 +18,38 @@ export function applyDamping (body) {
     body.angularVelocity.multiplyScalar(worldOptions.damping);
 }
 
-export function applyAirDynamics(body) {
-    const v = body.velocity.length();
-    if (v === 0) return;
-    const dragMagnitude = 0.5 * worldOptions.airDensity * v * v * body.dragArea * body.dragCoefficient;
-    const dragDirection = body.velocity.clone().normalize().negate();
-    body.addForce(dragDirection.multiplyScalar(dragMagnitude),"drag");
-}
+export function applyAerodynamicForces(body) {
+    if (!body.faces) return;
 
-export function applyWind(body) {
-    body.addForce(windForce.clone(), "wind");
-}
+    const airDensity = worldOptions.airDensity;
+    const liftCoefficient = body.liftCoefficient || 0.2;
 
-export function applyMagnusForce(body) {
-    if (body.velocity.length() === 0 || body.angularVelocity.length() === 0) return;
+    body.faces.forEach(face => {
+        // World-space centroid and normal
+        const centroidWorld = face.centroid.clone().applyMatrix4(body.matrix);
+        const normalWorld = face.normal.clone().transformDirection(body.matrix);
 
-    // characteristic radius: approximate as half bounding sphere diameter
-    const radius = body.sphere.radius;
+        // Relative velocity at this point (linear + rotational)
+        const r = new THREE.Vector3().subVectors(centroidWorld, body.position);
+        const pointVelocity = body.velocity.clone().add(new THREE.Vector3().crossVectors(body.angularVelocity, r));
+        const vRel = windForce.clone().sub(pointVelocity); // wind relative to point
+        const speed = vRel.length();
+        if (speed === 0) return;
 
-    // Magnus coefficient
-    const S = 0.5 * worldOptions.airDensity * body.dragArea * radius;
+        const vDir = vRel.clone().normalize();
 
-    // Force = S * omega × v_rel
-    const magnusForce = new THREE.Vector3().crossVectors(body.angularVelocity, body.velocity).multiplyScalar(S);
+        // --- Drag ---
+        let cosTheta = normalWorld.dot(vDir);
+        if (cosTheta < 0) cosTheta = 0;
+        const projectedArea = face.area * cosTheta;
+        const dragMagnitude = 0.5 * airDensity * speed * speed * body.dragCoefficient * projectedArea;
+        const dragForce = vDir.clone().multiplyScalar(dragMagnitude);
+        body.addForce(dragForce, "drag", centroidWorld);
 
-    // Apply to body
-    body.addForce(magnusForce,"magnus");
+        // --- Lift ---
+        const liftDir = new THREE.Vector3().crossVectors(vDir, normalWorld).cross(vDir).normalize();
+        const liftMagnitude = 0.5 * airDensity * speed * speed * liftCoefficient * projectedArea;
+        const liftForce = liftDir.multiplyScalar(liftMagnitude);
+        body.addForce(liftForce, "lift", centroidWorld);
+    });
 }

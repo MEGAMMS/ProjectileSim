@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { mainScene } from '../render/render';
-import { getPointsBuffer } from './convex';
+import { getFaceData, getPointsBuffer } from './geometry';
 import { createConvexHelper, createAxesHelper, visualizePoint } from '../utility/helpers';
 import { monitorOptions } from '../objects/options';
 import { Quaternion } from 'three';
@@ -28,11 +28,14 @@ class RigidBody {
     this.prevPosition = this.position.clone();
     this.prevQuaternion = this.quaternion.clone();
 
+    // Colider
     this.lconvex = getPointsBuffer(mesh.geometry);
     this.convex = this.lconvex.map(v => v.clone().applyMatrix4(this.matrix));
     this.lsphere = new THREE.Sphere().setFromPoints(this.lconvex);
     this.sphere = this.lsphere.clone().applyMatrix4(this.matrix);
+    this.faces = getFaceData(this.mesh);
 
+    // Physics Properties
     this.mass = mass;
     this.inverseMass = (mass !== 0.0) ? (1.0 / mass) : 0.0;
     
@@ -45,7 +48,6 @@ class RigidBody {
     this.friction = friction;
     this.restitution = restitution;
     this.dragCoefficient = dragCoefficient;
-    this.dragArea = 0;
 
     this.velocity = new THREE.Vector3();
     this.angularVelocity = new THREE.Vector3();
@@ -74,7 +76,7 @@ class RigidBody {
         this.forceAccum.add(force);
 
         // Angular
-        const r = new THREE.Vector3().subVectors(point, this.position);
+        const r = new THREE.Vector3().subVectors(point, this.comWorld);
         const torque = new THREE.Vector3().crossVectors(r, force);
         this.torqueAccum.add(torque);
 
