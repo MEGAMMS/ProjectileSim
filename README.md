@@ -13,8 +13,6 @@ A web-based projectile motion simulator built using JavaScript, HTML, and modula
   - [Installation](#installation)  
   - [Running Locally](#running-locally)  
 - [Usage](#usage)  
-- [Project Structure](#project-structure)  
-- [Development Tools & Configuration](#development-tools--configuration)  
 - [Contributing](#contributing) 
 
 ---
@@ -80,3 +78,20 @@ Built as a modular, ES6-based web app, it aims to be both an educational tool an
     - Horizontal Range
 
 5. Modify parameters and run new simulations as desired.
+
+### Contributing
+
+Contributions are welcome! Here's how to help:
+
+1. Fork the repo.
+
+2. Create a new branch:
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+3. Make your changes and commit with descriptive messages.
+4. Push to your fork:
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+5. Open a Pull Request detailing your enhancements or fixes.
