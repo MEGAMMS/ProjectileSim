@@ -9,7 +9,7 @@ import { Quaternion } from 'three';
 const forceColors = {
     gravity: 0x0000ff, // blue
     drag: 0xff0000,    // red
-    magnus: 0x00ff00,  // green
+    lift: 0x00ff00,  // green
     wind: 0xffff00,  // yellow
 };
 
@@ -48,6 +48,7 @@ class RigidBody {
     this.friction = friction;
     this.restitution = restitution;
     this.dragCoefficient = dragCoefficient;
+    this.liftCoefficient = 0.2;
 
     this.velocity = new THREE.Vector3();
     this.angularVelocity = new THREE.Vector3();

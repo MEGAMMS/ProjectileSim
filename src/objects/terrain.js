@@ -150,3 +150,53 @@ for (let i = 0; i < chunksZ; i++) {
     physicsEngine.addBody(chunk);
   }
 }
+
+
+
+
+// Compute terrain bounds
+geometry.computeBoundingBox();
+const min = geometry.boundingBox.min;
+const max = geometry.boundingBox.max;
+
+// Wall thickness
+const wallThickness = 1;
+
+// Helper to create a vertical wall (box) along an edge
+function createWall(centerX, centerZ, width, depth, height) {
+  const wallGeometry = new THREE.BoxGeometry(width, height, depth);
+  
+const wallMaterial = new THREE.MeshStandardMaterial({
+  color: 0xf5f5f5,   // very light gray, almost white
+  roughness: 0.85,   // matte, no shiny plastic look
+  metalness: 0.05,   // tiny bit of reflection for realism
+  flatShading: false
+});
+  const wallMesh = new THREE.Mesh(wallGeometry, wallMaterial);
+
+  wallMesh.castShadow = true;
+  wallMesh.receiveShadow = true;
+
+  const wallBody = new RigidBody(
+    wallMesh,
+    new Vector3(centerX, height / 2, centerZ),
+    new Quaternion(),
+    0,   // static
+    0.8,
+    0.8
+  );
+  physicsEngine.addBody(wallBody);
+  mainScene.add(wallMesh);
+}
+
+// Front wall (along X, min Z)
+createWall((min.x + max.x)/2, min.z - wallThickness/2, max.x - min.x, wallThickness, 20);
+
+// Back wall (along X, max Z)
+createWall((min.x + max.x)/2, max.z + wallThickness/2, max.x - min.x, wallThickness, 20);
+
+// Left wall (along Z, min X)
+createWall(min.x - wallThickness/2, (min.z + max.z)/2, wallThickness, max.z - min.z, 20);
+
+// Right wall (along Z, max X)
+createWall(max.x + wallThickness/2, (min.z + max.z)/2, wallThickness, max.z - min.z, 20);

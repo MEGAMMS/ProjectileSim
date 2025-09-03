@@ -2,14 +2,11 @@ import * as THREE from 'three';
 import { worldOptions } from '../objects/options';
 
 
-const gravityForce = new THREE.Vector3(0, -9.81, 0);
-export const updateGravity = () => gravityForce.set(0,worldOptions.gravityY,0);
-const windForce = new THREE.Vector3(0,0,0);
-export const updateWind = () => windForce.set(worldOptions.windX,worldOptions.windY,worldOptions.windZ);
-
 
 /* Forces */
 export function applyGravity(body) {
+    const g = (worldOptions.G * worldOptions.M) / Math.pow(worldOptions.R + body.position.y,2);
+    const gravityForce = new THREE.Vector3(0, -g, 0);
     body.addForce(gravityForce.clone().multiplyScalar(body.mass),"gravity");
 }
 
@@ -21,9 +18,6 @@ export function applyDamping (body) {
 export function applyAerodynamicForces(body) {
     if (!body.faces) return;
 
-    const airDensity = worldOptions.airDensity;
-    const liftCoefficient = body.liftCoefficient || 0.2;
-
     body.faces.forEach(face => {
         // World-space centroid and normal
         const centroidWorld = face.centroid.clone().applyMatrix4(body.matrix);
@@ -32,23 +26,23 @@ export function applyAerodynamicForces(body) {
         // Relative velocity at this point (linear + rotational)
         const r = new THREE.Vector3().subVectors(centroidWorld, body.position);
         const pointVelocity = body.velocity.clone().add(new THREE.Vector3().crossVectors(body.angularVelocity, r));
-        const vRel = windForce.clone().sub(pointVelocity); // wind relative to point
+        const vRel = worldOptions.windForce.clone().sub(pointVelocity); // wind relative to point
         const speed = vRel.length();
         if (speed === 0) return;
 
         const vDir = vRel.clone().normalize();
-
-        // --- Drag ---
         let cosTheta = normalWorld.dot(vDir);
         if (cosTheta < 0) cosTheta = 0;
         const projectedArea = face.area * cosTheta;
-        const dragMagnitude = 0.5 * airDensity * speed * speed * body.dragCoefficient * projectedArea;
+
+        // --- Drag ---
+        const dragMagnitude = 0.5 * worldOptions.airDensity * speed * speed * body.dragCoefficient * projectedArea;
         const dragForce = vDir.clone().multiplyScalar(dragMagnitude);
         body.addForce(dragForce, "drag", centroidWorld);
 
         // --- Lift ---
         const liftDir = new THREE.Vector3().crossVectors(vDir, normalWorld).cross(vDir).normalize();
-        const liftMagnitude = 0.5 * airDensity * speed * speed * liftCoefficient * projectedArea;
+        const liftMagnitude = 0.5 * worldOptions.airDensity * speed * speed * body.liftCoefficient * projectedArea;
         const liftForce = liftDir.multiplyScalar(liftMagnitude);
         body.addForce(liftForce, "lift", centroidWorld);
     });

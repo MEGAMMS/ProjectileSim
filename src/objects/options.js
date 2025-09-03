@@ -2,13 +2,13 @@ import { Vector3 } from "three";
 
 // Global physics world options
 export const worldOptions = {
+  G: 6.67430e-11,
+  M: 5.9722e24,
+  R: 6371000,
   simulationSpeed: 1,
   damping: 0.99,
-  gravityY: -9.81,
   airDensity: 1.225,
-  windX: 0,
-  windY: 0,
-  windZ: 0,
+  windForce: new Vector3(0,0,0)
 };
 
 // Default shape options

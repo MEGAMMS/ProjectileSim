@@ -1,7 +1,6 @@
 import GUI from "lil-gui";
 import { worldOptions , shapeOptions , dynamicsOptions , monitorOptions } from "../objects/options";
 import { updateShape } from "../objects/projectileLauncher";
-import { updateGravity, updateWind } from "../physics/forces"; 
 
 
 // ================== MAIN CONTROL GUI (RIGHT) ==================
@@ -18,19 +17,19 @@ gui.add(shapeOptions, "type", ["Box", "Sphere", "Cylinder"]).onChange(value => {
 
 // Box folder
 const boxFolder = gui.addFolder("Box");
-boxFolder.add(shapeOptions, "width", 0.1, 5).onChange(updateShape);
-boxFolder.add(shapeOptions, "height", 0.1, 5).onChange(updateShape);
-boxFolder.add(shapeOptions, "depth", 0.1, 5).onChange(updateShape);
+boxFolder.add(shapeOptions, "width", 0.1, 1).onChange(updateShape);
+boxFolder.add(shapeOptions, "height", 0.1, 1).onChange(updateShape);
+boxFolder.add(shapeOptions, "depth", 0.1, 1).onChange(updateShape);
 
 // Sphere folder
 const sphereFolder = gui.addFolder("Sphere");
-sphereFolder.add(shapeOptions, "radius", 0.1, 5).onChange(updateShape);
+sphereFolder.add(shapeOptions, "radius", 0.1, 1).onChange(updateShape);
 
 // Cylinder folder
 const cylinderFolder = gui.addFolder("Cylinder");
-cylinderFolder.add(shapeOptions, "radiusTop", 0.1, 5).onChange(updateShape);
-cylinderFolder.add(shapeOptions, "radiusBottom", 0.1, 5).onChange(updateShape);
-cylinderFolder.add(shapeOptions, "height", 0.1, 5).onChange(updateShape);
+cylinderFolder.add(shapeOptions, "radiusTop", 0.1, 1).onChange(updateShape);
+cylinderFolder.add(shapeOptions, "radiusBottom", 0.1, 1).onChange(updateShape);
+cylinderFolder.add(shapeOptions, "height", 0.1, 1).onChange(updateShape);
 
 // Shape folder toggle logic
 const shapeFolders = {
@@ -53,11 +52,10 @@ gui.addColor(shapeOptions, "color").onChange(updateShape);
 const worldFolder = gui.addFolder("Gravity & Environment");
 worldFolder.add(worldOptions, "simulationSpeed", 0.1, 2).step(0.1).name("Simulation Speed");
 worldFolder.add(worldOptions, "damping", 0.9, 1).step(0.001).name("Damping");
-worldFolder.add(worldOptions, "gravityY", -20, 0).step(0.1).name("Gravity (Y)").onChange(updateGravity);
 worldFolder.add(worldOptions, "airDensity", 0, 3).step(0.01).name("Air Density");
-worldFolder.add(worldOptions, "windX", -10, 10).step(0.1).name("Wind X").onChange(updateWind);
-worldFolder.add(worldOptions, "windY", -10, 10).step(0.1).name("Wind Y").onChange(updateWind);
-worldFolder.add(worldOptions, "windZ", -10, 10).step(0.1).name("Wind Z").onChange(updateWind);
+worldFolder.add(worldOptions.windForce, "x", -10, 10).step(0.1).name("Wind X");
+worldFolder.add(worldOptions.windForce, "y", -10, 10).step(0.1).name("Wind Y");
+worldFolder.add(worldOptions.windForce, "z", -10, 10).step(0.1).name("Wind Z");
 
 // Projectile dynamics folder
 const dynamicsFolder = gui.addFolder("Projectile Dynamics");
