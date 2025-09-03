@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import physicsEngine from '../physics/physicsEngine';
 import { lastPhysicsTime , physicsIntervalDuration } from '../physics/physics';
 import { TransformControls } from 'three/addons/controls/TransformControls.js';
+import { currentObjects } from '../objects/options';
 
 
 // Set up the main renderer
@@ -52,6 +53,10 @@ export const mainCamera = new THREE.PerspectiveCamera(
   1000
 );
 mainCamera.position.set(0, 10, 5);
+currentObjects.activeCamera = mainCamera;
+
+// Follow Camera
+export const followCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
 // Gizmo Camera
 const gizmoSize = 1; // tweak this to make the gizmo the right size on screen
@@ -113,5 +118,15 @@ mainRenderer.setAnimationLoop( (t) => {
         //body.mesh.quaternion.copy(body.quaternion);
     });
 
-  mainRenderer.render(mainScene, mainCamera)
+    const projectile = currentObjects.activeProjectile;
+      if (projectile) {
+        // Set camera a bit behind and above the projectile
+        const offset = new THREE.Vector3(0, 2, -6);
+        followCamera.position.copy(projectile.mesh.position).add(offset);
+
+        // Always look forward in world space
+        followCamera.lookAt(projectile.mesh.position.clone().add(new THREE.Vector3(0, 0, 10)));
+      }
+
+  mainRenderer.render(mainScene, currentObjects.activeCamera)
 } );

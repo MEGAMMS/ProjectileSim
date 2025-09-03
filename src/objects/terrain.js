@@ -146,7 +146,7 @@ for (let i = 0; i < chunksZ; i++) {
 
     const chunkMesh = new THREE.Mesh(convexGeometry, material);
     chunkMesh.receiveShadow = true;
-    const chunk = new RigidBody(chunkMesh, new Vector3() , new Quaternion() , 0, 0.8, 0.8); // mass 0 for static terrain
+    const chunk = new RigidBody(chunkMesh, new Vector3() , new Quaternion() , 0 , 0, 0.8, 0.8); // mass 0 for static terrain
     physicsEngine.addBody(chunk);
   }
 }
@@ -182,6 +182,7 @@ const wallMaterial = new THREE.MeshStandardMaterial({
     new Vector3(centerX, height / 2, centerZ),
     new Quaternion(),
     0,   // static
+    0,
     0.8,
     0.8
   );

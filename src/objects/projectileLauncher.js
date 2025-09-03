@@ -1,9 +1,9 @@
 import * as THREE from 'three';
-import { mainRenderer , mainScene , mainCamera, transform } from '../render/render.js';
+import { followCamera, mainScene , transform } from '../render/render.js';
 import RigidBody from '../physics/rigidBody.js';
 import physicsEngine from '../physics/physicsEngine.js';
 import {createShape} from './projectiles.js';
-import { shapeOptions , dynamicsOptions } from './options.js';
+import { shapeOptions , dynamicsOptions , currentObjects } from './options.js';
 import { buildStatsFolders } from "../utility/gui.js"
 
 
@@ -80,6 +80,7 @@ function createBody (projectile) {
     projectileFactory.quaternion,
     dynamicsOptions.mass ,
     dynamicsOptions.dragCoefficient,
+    dynamicsOptions.liftCoefficient,
     dynamicsOptions.friction,
     dynamicsOptions.restitution,
     dynamicsOptions.centerOfMass
@@ -88,7 +89,12 @@ function createBody (projectile) {
   return projectileBody;
 }
 
-
+/*
+export let activeProjectile = null; // store the last fired projectile
+export function getActiveProjectile() {
+  return activeProjectile;
+}
+*/
 function fireProjectile() {
   const projectile = currentShape.clone();
   projectile.material = currentShape.material.clone();
@@ -99,6 +105,10 @@ function fireProjectile() {
   const impulse = dir.clone().multiplyScalar(dynamicsOptions.initialVelocity);
   projectileBody.velocity.copy(impulse);
   physicsEngine.addBody(projectileBody);
+
+  // === Attach follow camera ===
+  currentObjects.activeCamera = followCamera;
+  currentObjects.activeProjectile = projectileBody;
 }
 
 

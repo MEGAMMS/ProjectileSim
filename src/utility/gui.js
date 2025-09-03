@@ -1,6 +1,7 @@
 import GUI from "lil-gui";
-import { worldOptions , shapeOptions , dynamicsOptions , monitorOptions } from "../objects/options";
+import { worldOptions , shapeOptions , dynamicsOptions , monitorOptions, currentObjects } from "../objects/options";
 import { updateShape } from "../objects/projectileLauncher";
+import { mainCamera } from "../render/render.js";
 
 
 // ================== MAIN CONTROL GUI (RIGHT) ==================
@@ -62,6 +63,7 @@ const dynamicsFolder = gui.addFolder("Projectile Dynamics");
 dynamicsFolder.add(dynamicsOptions, "initialVelocity", 10, 100).step(1).name("Initial Velocity");
 dynamicsFolder.add(dynamicsOptions, "mass", 0.1, 50).step(0.1).name("Mass");
 dynamicsFolder.add(dynamicsOptions, "dragCoefficient", 0, 2).step(0.01).name("Drag Coeff");
+dynamicsFolder.add(dynamicsOptions, "liftCoefficient", 0, 2).step(0.01).name("Lift Coeff");
 dynamicsFolder.add(dynamicsOptions, "friction", 0, 1).step(0.01).name("Friction");
 dynamicsFolder.add(dynamicsOptions, "restitution", 0, 1).step(0.01).name("Restitution");
 
@@ -70,6 +72,7 @@ const monitorFolder = gui.addFolder("Monitor");
 monitorFolder.add(monitorOptions, "showForces").name("Show Forces");
 monitorFolder.add(monitorOptions, "showPath").name("Show Path");
 monitorFolder.add(monitorOptions, "showHelpers").name("Show Helpers");
+monitorFolder.add({ reset: () => currentObjects.activeCamera = mainCamera }, "reset").name("Return to Main Camera");
 
 
 

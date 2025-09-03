@@ -15,7 +15,7 @@ const forceColors = {
 
 
 class RigidBody {
-  constructor(mesh, position , quaternion , mass = 1 , dragCoefficient = 0.5 , friction = 0.5, restitution = 0.8 , com = new THREE.Vector3()) {
+  constructor(mesh, position , quaternion , mass = 1 , dragCoefficient = 0.5 , liftCoefficient = 0.2 , friction = 0.5, restitution = 0.8 , com = new THREE.Vector3()) {
     this.mesh = mesh;
     mainScene.add(mesh);
 
@@ -48,7 +48,7 @@ class RigidBody {
     this.friction = friction;
     this.restitution = restitution;
     this.dragCoefficient = dragCoefficient;
-    this.liftCoefficient = 0.2;
+    this.liftCoefficient = liftCoefficient;
 
     this.velocity = new THREE.Vector3();
     this.angularVelocity = new THREE.Vector3();
