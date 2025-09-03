@@ -31,6 +31,7 @@ export const dynamicsOptions = {
   mass: 1,
   dragCoefficient: 0.5,
   liftCoefficient: 0.2,
+  magnusCoefficient: 0.2,
   friction: 0.5,
   restitution: 0.8,
 };

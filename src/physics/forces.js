@@ -47,3 +47,27 @@ export function applyAerodynamicForces(body) {
         body.addForce(liftForce, "lift", centroidWorld);
     });
 }
+
+export function applyMagnusForce(body) {
+    // Only apply if the body has spin and is moving
+    if (!body.velocity || !body.angularVelocity) return;
+
+    const v = body.velocity;
+    const w = body.angularVelocity;
+    const speed = v.length();
+    const spin = w.length();
+    if (speed === 0 || spin === 0) return;
+
+    // Use body's radius if available, else default
+    const r = body.radius || 0.5; // or get from shapeOptions
+    const Cm = body.magnusCoefficient !== undefined ? body.magnusCoefficient : 0.2;
+    const rho = worldOptions.airDensity;
+
+    // Magnus force direction: w x v (right-hand rule)
+    const magnusDir = new THREE.Vector3().crossVectors(w, v).normalize();
+    // Magnitude (simplified): Cm * rho * r^3 * |w x v|
+    const magnitude = Cm * rho * Math.pow(r, 3) * w.clone().cross(v).length();
+
+    const magnusForce = magnusDir.multiplyScalar(magnitude);
+    body.addForce(magnusForce, "magnus");
+}

@@ -14,6 +14,7 @@ function runPhysicsLoop() {
         if (body.mass === 0) return;
         forces.applyDamping(body);
         forces.applyGravity(body);
+        forces.applyMagnusForce(body);
         forces.applyAerodynamicForces(body);
     });
     physicsEngine.update(FIXED_DELTA);
